@@ -1,4 +1,4 @@
-package com.debuggeandoideas.erp_lite.documents;
+package com.debuggeandoideas.erp_lite.persistence.mongo.documents;
 
 public enum CatalogType {
     PRODUCT_CATEGORIES,

@@ -1,4 +1,4 @@
-package com.debuggeandoideas.erp_lite.entities;
+package com.debuggeandoideas.erp_lite.persistence.jpa.entities;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
