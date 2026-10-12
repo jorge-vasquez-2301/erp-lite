@@ -1,4 +1,4 @@
-package com.debuggeandoideas.erplite.infrastructure.persistence.entity;
+package com.debuggeandoideas.erplite.entities;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
