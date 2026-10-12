@@ -1,4 +1,17 @@
 dependencies {
-    implementation project(':erp-application')
-    implementation project(':erp-domain')
+    // General module dependencies
+    api project(':erp-common')
+    api project(':erp-domain')
+    api project(':erp-application')
+
+    // SQL
+    api 'org.postgresql:postgresql:42.7.8'
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Mongo
+    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    // Redis
+    api 'org.springframework.boot:spring-boot-starter-data-redis'
+    api 'org.springframework.boot:spring-boot-starter-cache'
 }
