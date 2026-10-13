@@ -1,0 +1,8 @@
+aws:
+  s3:
+    endpoint: http://localhost:4566
+    region: us-east-1
+    access-key: debuggeandoideas
+    secret-key: secret
+    bucket-name: erp-products-images
+    path-style-enabled: true
