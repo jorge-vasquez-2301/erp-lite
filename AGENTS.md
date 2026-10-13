@@ -7,24 +7,32 @@ Guidance for coding agents working in **erp-lite**. Keep this file short and act
 - Build: Gradle multi-module Wrapper (`./gradlew`, Gradle **9.7.1**) — do not introduce Maven
 - Runtime: Java **25** (toolchain in root `build.gradle`)
 - Framework: Spring Boot **4.1.1**
-- Web: `spring-boot-starter-web` only in `:erp-api`
+- Web / ops: `spring-boot-starter-web` + Actuator in `:erp-api` (app port **9090**)
 - Utilities (all subprojects): Lombok + MapStruct + `lombok-mapstruct-binding` (`compileOnly` / `annotationProcessor` / `implementation` as in root `build.gradle`)
-- Persistence (in `:erp-infrastructure`): Spring Data JPA + PostgreSQL, Spring Data MongoDB, Spring Data Redis + cache
-- Local data stores: `docker-compose.yaml` (Postgres 17, MongoDB 8, Redis 7, Redis Commander)
-- Base package: `com.debuggeandoideas.erplite`
-- Config: `erp-api/src/main/resources/application.yaml`
+- Persistence / adapters (in `:erp-infrastructure`): Spring Data JPA + PostgreSQL, Spring Data MongoDB, Spring Data Redis + cache, AWS SDK S3 (`software.amazon.awssdk:s3`), validation
+- Local data stores: `docker-compose.yaml` (Postgres 17, MongoDB 8, Redis 7, Redis Commander, LocalStack 3.8 S3)
+- Base package: `com.debuggeandoideas.erp_lite`
+- Config: `erp-api/src/main/resources/application.yaml` (+ `aws/aws.yaml` for LocalStack/S3)
 
 ## Modules
 
 | Module | Role | Depends on |
 | --- | --- | --- |
-| `:erp-common` | Shared utilities / cross-cutting types | — |
-| `:erp-domain` | Domain model | `:erp-common` |
-| `:erp-application` | Use cases / ports | `:erp-domain` |
-| `:erp-infrastructure` | Adapters (JPA/Postgres, MongoDB, Redis) | `:erp-common`, `:erp-domain`, `:erp-application` |
+| `:erp-common` | Shared utilities / cross-cutting types (scaffold) | — |
+| `:erp-domain` | Domain model (Product, Order, Catalog, shared VOs, ports) | `:erp-common` |
+| `:erp-application` | Use cases / ports (scaffold) | `:erp-domain` |
+| `:erp-infrastructure` | Adapters (JPA/Postgres, MongoDB, Redis deps, AWS S3) | `:erp-common`, `:erp-domain`, `:erp-application` |
 | `:erp-api` | REST + Spring Boot entrypoint | `:erp-application`, `:erp-infrastructure` |
 
 Only `:erp-api` applies the Spring Boot plugin and is runnable.
+
+### Current status
+
+- **Domain**: Product / Order / Catalog models, domain events, `ImageStorageService` port, `CatalogRepository` port; solid unit-test coverage under `erp-domain/src/test`
+- **Infrastructure**: JPA entities/repos (products, orders), Mongo documents/repos (catalogs, product queries, audit logs), AWS S3 image-storage adapter; Redis starter is wired but no Redis adapter code yet
+- **Application / common**: empty scaffolds (no use-case classes yet)
+- **API**: `ErpLiteApplication` + YAML property helpers; no REST controllers yet
+- **DB init**: `db/postgresql/` schema+seed, `db/mongodb/` init script (mounted by Compose)
 
 ## Commands
 
@@ -46,14 +54,14 @@ After behavior changes, run `./gradlew test` before considering work done.
 ```
 settings.gradle                 # module includes
 build.gradle                    # shared Java/Lombok/MapStruct/BOM config
-docker-compose.yaml             # local Postgres, MongoDB, Redis (+ Redis UI)
+docker-compose.yaml             # Postgres, MongoDB, Redis (+ UI), LocalStack S3
 db/postgresql/                  # Postgres init scripts (mounted by Compose)
 db/mongodb/                     # Mongo init scripts (mounted by Compose)
-erp-common/                     # ...erplite.common
-erp-domain/                     # ...erplite.domain
-erp-application/                # ...erplite.application
-erp-infrastructure/             # ...erplite.infrastructure
-erp-api/                        # controllers + ErpLiteApplication
+erp-common/                     # ...erp_lite (scaffold)
+erp-domain/                     # ...erp_lite.domain (catalog, order, product, shared, ports)
+erp-application/                # ...erp_lite.application (scaffold)
+erp-infrastructure/             # ...erp_lite.persistence (jpa, mongo, aws)
+erp-api/                        # ErpLiteApplication + configs; resources/application.yaml, aws/aws.yaml
 gradle/wrapper/                 # wrapper; do not edit unless upgrading Gradle
 ```
 
@@ -61,17 +69,17 @@ Do not edit generated outputs under `build/`, `*/build/`, or `.gradle/`.
 
 ## Conventions
 
-- Put types in the matching module package (`...common`, `...domain`, `...application`, `...infrastructure`, or root/api under `erp-api`).
+- Put types in the matching module package (`...erp_lite` / `...domain` / `...application` / `...persistence` / api configs under `erp-api`).
 - Prefer constructor injection; avoid field injection.
-- Do not add Spring Web (or Boot Web) dependencies outside `:erp-api`.
-- Keep persistence drivers and Spring Data starters in `:erp-infrastructure` (not in `:erp-api` / `:erp-domain`).
-- Prefer YAML config in `erp-api` `application.yaml` over scattered `.properties` files.
+- Keep REST controllers and the Boot entrypoint in `:erp-api` (do not add controllers elsewhere).
+- Keep persistence drivers, Spring Data starters, and AWS SDK in `:erp-infrastructure` (not in `:erp-api` / `:erp-domain`).
+- Prefer YAML config in `erp-api` (`application.yaml`, `aws/aws.yaml`) over scattered `.properties` files.
 - Keep dependency direction: api → application/infrastructure → domain → common (no reverse deps).
 - Keep changes scoped to the requested task; do not refactor unrelated code.
 
 ## Safety
 
-- Never commit secrets, credentials, or real connection strings (Compose uses local/dev-only defaults).
+- Never commit secrets, credentials, or real connection strings (Compose / local YAML use local/dev-only defaults).
 - Do not modify production data or run destructive DB commands without explicit approval.
 - Ask before changing the Java toolchain version, Spring Boot version, or Gradle wrapper distribution.
 
