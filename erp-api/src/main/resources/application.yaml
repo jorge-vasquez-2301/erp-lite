@@ -50,6 +50,24 @@ spring:
       include-binding-errors: ${ERROR_INCLUDE_BINDING:always}
       include-stacktrace: ${ERROR_INCLUDE_STACKTRACE:always}
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        debug: false
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
+
 # Server
 server:
   port: 9090

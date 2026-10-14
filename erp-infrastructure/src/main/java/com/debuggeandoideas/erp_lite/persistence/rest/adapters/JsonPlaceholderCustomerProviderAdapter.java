@@ -1,7 +1,7 @@
 package com.debuggeandoideas.erp_lite.persistence.rest.adapters;
 
 import com.debuggeandoideas.erp_lite.domain.customer.CustomerInfo;
-import com.debuggeandoideas.erp_lite.domain.customer.CustomerProviderService;
+import com.debuggeandoideas.erp_lite.domain.ports.CustomerProviderService;
 import com.debuggeandoideas.erp_lite.persistence.rest.dtos.UserDTO;
 import com.debuggeandoideas.erp_lite.persistence.rest.mappers.CustomerMapper;
 import com.debuggeandoideas.erp_lite.persistence.rest.models.JsonplaceholderConfigModel;

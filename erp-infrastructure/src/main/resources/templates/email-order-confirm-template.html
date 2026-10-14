@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="x-apple-disable-message-reformatting"/>
+    <title>Confirmación de orden</title>
+</head>
+
+<body style="margin:0;padding:0;background-color:#F3F6F9;font-family:Arial,Helvetica,sans-serif;color:#1F2A37;">
+<!-- Preheader (hidden) -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">
+    Tu orden {{orderNumber}} ha sido confirmada.
+</div>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#F3F6F9;">
+    <tr>
+        <td align="center" style="padding:24px 12px;">
+            <!-- Container -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640"
+                   style="width:640px;max-width:100%;background-color:#FFFFFF;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,0.08);">
+                <!-- Header -->
+                <tr>
+                    <td style="background-color:#16537E;padding:22px 24px;border-bottom:4px solid #F59E0B;">
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                                <td align="left" style="color:#FFFFFF;">
+                                    <div style="font-size:18px;line-height:22px;font-weight:700;">Confirmación de
+                                        compra
+                                    </div>
+                                    <div style="font-size:13px;line-height:18px;opacity:0.95;margin-top:4px;">
+                                        Orden <strong style="color:#F59E0B;">{{orderNumber}}</strong> • Fecha:
+                                        {{orderDate}}
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                    <td style="padding:22px 24px;">
+                        <div style="font-size:15px;line-height:22px;margin:0 0 14px 0;">
+                            Hola <strong style="color:#16537E;">{{customerName}}</strong>, gracias por tu compra.
+                            Hemos recibido tu orden y ya está en proceso. Aquí tienes los detalles:
+                        </div>
+
+                        <!-- Summary card -->
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+                               style="background-color:#F8FAFC;border:1px solid #F59E0B;border-radius:12px;">
+                            <tr>
+                                <td style="padding:16px 16px 10px 16px;">
+                                    <div style="font-size:13px;line-height:18px;color:#F59E0B;font-weight:700;margin-bottom:6px;">
+                                        Resumen de la orden
+                                    </div>
+
+                                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="padding:6px 0;font-size:14px;line-height:20px;color:#111827;">
+                                                <strong style="color:#16537E;">Número de orden:</strong> {{orderNumber}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:6px 0;font-size:14px;line-height:20px;color:#111827;">
+                                                <strong style="color:#16537E;">ID de orden:</strong> {{orderId}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:6px 0;font-size:14px;line-height:20px;color:#111827;">
+                                                <strong style="color:#16537E;">Fecha de compra:</strong> {{orderDate}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:6px 0;font-size:14px;line-height:20px;color:#111827;">
+                                                <strong style="color:#16537E;">Artículos:</strong> {{itemsCount}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:6px 0;font-size:14px;line-height:20px;color:#111827;">
+                                                <strong style="color:#16537E;">Total:</strong>
+                                                <span style="color:#F59E0B;font-weight:700;">
+                                                    {{totalAmount}} {{currency}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Help text -->
+                        <div style="font-size:12px;line-height:18px;color:#6B7280;margin-top:12px;">
+                            Si notas algún error en la información, responde a este correo y con gusto te ayudamos.
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="padding:18px 24px;background-color:#0F2E45;border-top:3px solid #F59E0B;">
+                        <div style="font-size:12px;line-height:18px;color:#E5E7EB;">
+                            Este correo es una confirmación automática de tu compra.
+                        </div>
+                        <div style="font-size:12px;line-height:18px;color:#F59E0B;margin-top:8px;">
+                            © {{year}} {{companyName}} • Todos los derechos reservados
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Spacer -->
+            <div style="height:16px;line-height:16px;">&nbsp;</div>
+
+            <!-- Small note -->
+            <div style="font-size:11px;line-height:16px;color:#94A3B8;max-width:640px;">
+                Por seguridad, no compartas información sensible por correo.
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

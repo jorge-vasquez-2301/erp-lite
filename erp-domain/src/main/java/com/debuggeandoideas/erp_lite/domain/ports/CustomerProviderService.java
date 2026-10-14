@@ -1,4 +1,6 @@
-package com.debuggeandoideas.erp_lite.domain.customer;
+package com.debuggeandoideas.erp_lite.domain.ports;
+
+import com.debuggeandoideas.erp_lite.domain.customer.CustomerInfo;
 
 import java.util.Optional;
 
