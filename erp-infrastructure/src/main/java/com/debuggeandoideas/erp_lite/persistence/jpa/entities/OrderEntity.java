@@ -42,7 +42,7 @@ public class OrderEntity {
     @Column(name = "created_by", length = 100, nullable = false)
     private String createdBy;
 
-    @Column(name = "order_date", nullable = false)
+    @Column(name = "order_date", nullable = false, updatable = false)
     private LocalDateTime orderDate;
 
     @Column(name = "status", length = 20, nullable = false)
