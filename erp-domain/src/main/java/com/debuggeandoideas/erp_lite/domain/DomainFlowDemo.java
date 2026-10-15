@@ -1,14 +1,14 @@
 package com.debuggeandoideas.erp_lite.domain;
 
-import com.debuggeandoideas.erp_lite.domain.catalog.Catalog;
-import com.debuggeandoideas.erp_lite.domain.catalog.CatalogItem;
-import com.debuggeandoideas.erp_lite.domain.catalog.CatalogType;
 import com.debuggeandoideas.erp_lite.domain.common.DomainEvent;
-import com.debuggeandoideas.erp_lite.domain.order.Customer;
-import com.debuggeandoideas.erp_lite.domain.order.Order;
-import com.debuggeandoideas.erp_lite.domain.order.OrderItem;
-import com.debuggeandoideas.erp_lite.domain.order.OrderNumber;
-import com.debuggeandoideas.erp_lite.domain.product.*;
+import com.debuggeandoideas.erp_lite.domain.entities.catalog.CatalogItem;
+import com.debuggeandoideas.erp_lite.domain.entities.catalog.CatalogRoot;
+import com.debuggeandoideas.erp_lite.domain.entities.catalog.CatalogType;
+import com.debuggeandoideas.erp_lite.domain.entities.order.Customer;
+import com.debuggeandoideas.erp_lite.domain.entities.order.OrderItem;
+import com.debuggeandoideas.erp_lite.domain.entities.order.OrderNumber;
+import com.debuggeandoideas.erp_lite.domain.entities.order.OrderRoot;
+import com.debuggeandoideas.erp_lite.domain.entities.product.*;
 import com.debuggeandoideas.erp_lite.domain.shared.CustomerId;
 import com.debuggeandoideas.erp_lite.domain.shared.Money;
 import com.debuggeandoideas.erp_lite.domain.shared.Quantity;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  * Demostración del flujo completo del módulo de dominio (DDD).
- *
+ * <p>
  * Este main ilustra cómo los diferentes building blocks de DDD
  * (Aggregates, Entities, Value Objects, Domain Events) colaboran
  * para modelar las reglas de negocio del ERP sin depender de
@@ -76,7 +76,7 @@ public class DomainFlowDemo {
         );
         deprecated.turnOffStatus(); // La Entity tiene lógica de estado propio
 
-        Catalog productCatalog = new Catalog(
+        CatalogRoot productCatalog = new CatalogRoot(
                 "cat-001",
                 CatalogType.PRODUCT_CATEGORIES,
                 "Categorías de Productos",
@@ -125,7 +125,7 @@ public class DomainFlowDemo {
         // Product.create() es el factory method del Aggregate Root.
         // Internamente genera un ProductId (UUID), crea AuditInfo y
         // registra el DomainEvent ProductCreated.
-        Product laptop = Product.create(
+        ProductRoot laptop = ProductRoot.create(
                 laptopSku,
                 laptopName,
                 "Laptop de alto rendimiento con pantalla 15 pulgadas",
@@ -145,7 +145,7 @@ public class DomainFlowDemo {
                 + " -> " + laptop.getDomainEvents().get(0).getClass().getSimpleName());
 
         // Segundo producto para la orden
-        Product mouse = Product.create(
+        ProductRoot mouse = ProductRoot.create(
                 SKU.of("MOUSE-042"),
                 ProductName.of("Mouse Inalámbrico Ergonómico"),
                 "Mouse ergonómico con 6 botones programables",
@@ -195,7 +195,7 @@ public class DomainFlowDemo {
         IO.println("\n--- [4] PRODUCT AGGREGATE - Precio y Ciclo de Vida ---");
 
         // Creamos un producto extra para demostrar desactivación
-        Product oldKeyboard = Product.create(
+        ProductRoot oldKeyboard = ProductRoot.create(
                 SKU.of("KEYB-099"),
                 ProductName.of("Teclado Mecánico Vintage"),
                 "Modelo descontinuado",
@@ -256,15 +256,15 @@ public class DomainFlowDemo {
 
         // Order.create() valida ítems no vacíos, misma moneda, calcula total
         // y registra el DomainEvent OrderCreated
-        Order order = Order.create(orderNumber, customer, List.of(laptopItem, mouseItem), "sistema");
+        OrderRoot orderRoot = OrderRoot.create(orderNumber, customer, List.of(laptopItem, mouseItem), "sistema");
 
-        IO.println("Orden creada: " + order.getOrderNumber().value());
-        IO.println("  Cliente: " + order.getCustomer().customerName());
-        IO.println("  Estado: " + order.getStatus().value());
-        IO.println("  Total: " + order.getTotalAmount());
-        IO.println("  Items: " + order.getItems().size());
-        IO.println("  Evento: " + order.getDomainEvents().get(0).getClass().getSimpleName());
-        order.clearDomainEvents();
+        IO.println("Orden creada: " + orderRoot.getOrderNumber().value());
+        IO.println("  Cliente: " + orderRoot.getCustomer().customerName());
+        IO.println("  Estado: " + orderRoot.getStatus().value());
+        IO.println("  Total: " + orderRoot.getTotalAmount());
+        IO.println("  Items: " + orderRoot.getItems().size());
+        IO.println("  Evento: " + orderRoot.getDomainEvents().get(0).getClass().getSimpleName());
+        orderRoot.clearDomainEvents();
 
         // ------------------------------------------------------------------
         // 6. ORDER AGGREGATE - Agregar ítem en estado PENDING
@@ -276,7 +276,7 @@ public class DomainFlowDemo {
         IO.println("\n--- [6] ORDER AGGREGATE - Modificación en PENDING ---");
 
         // Creamos un tercer producto para agregar a la orden
-        Product usbHub = Product.create(
+        ProductRoot usbHub = ProductRoot.create(
                 SKU.of("USBH-007"),
                 ProductName.of("USB Hub 7 Puertos"),
                 "Hub USB 3.0 con alimentación independiente",
@@ -288,13 +288,13 @@ public class DomainFlowDemo {
         );
 
         OrderItem usbItem = OrderItem.from(usbHub, Quantity.of(1));
-        order.addItem(usbItem); // Solo permitido en PENDING
-        IO.println("Ítem agregado. Nuevo total: " + order.getTotalAmount());
-        IO.println("Ítems en la orden: " + order.getItems().size());
+        orderRoot.addItem(usbItem); // Solo permitido en PENDING
+        IO.println("Ítem agregado. Nuevo total: " + orderRoot.getTotalAmount());
+        IO.println("Ítems en la orden: " + orderRoot.getItems().size());
 
         // Removemos el mismo ítem para mantener la orden limpia para el demo
-        order.removeItem(usbItem);
-        IO.println("Ítem removido. Total restaurado: " + order.getTotalAmount());
+        orderRoot.removeItem(usbItem);
+        IO.println("Ítem removido. Total restaurado: " + orderRoot.getTotalAmount());
 
         // ------------------------------------------------------------------
         // 7. ORDER AGGREGATE - Ciclo de vida completo (Happy Path)
@@ -314,24 +314,24 @@ public class DomainFlowDemo {
         // PENDING → CONFIRMED
         // Dispara OrderConfirmed → la capa de aplicación lo usará para
         // decrementar stock en cada producto de la orden
-        order.confirm();
-        IO.println("Estado tras confirmar: " + order.getStatus().value());
-        IO.println("  Evento: " + order.getDomainEvents().get(0).getClass().getSimpleName()
+        orderRoot.confirm();
+        IO.println("Estado tras confirmar: " + orderRoot.getStatus().value());
+        IO.println("  Evento: " + orderRoot.getDomainEvents().get(0).getClass().getSimpleName()
                 + " (señal para decrementar stock)");
-        order.clearDomainEvents();
+        orderRoot.clearDomainEvents();
 
         // CONFIRMED → SHIPPED
         // Dispara OrderShipped → notificación de envío al cliente
-        order.ship();
-        IO.println("Estado tras enviar: " + order.getStatus().value());
-        IO.println("  Evento: " + order.getDomainEvents().get(0).getClass().getSimpleName());
-        order.clearDomainEvents();
+        orderRoot.ship();
+        IO.println("Estado tras enviar: " + orderRoot.getStatus().value());
+        IO.println("  Evento: " + orderRoot.getDomainEvents().get(0).getClass().getSimpleName());
+        orderRoot.clearDomainEvents();
 
         // SHIPPED → DELIVERED (estado final)
-        order.deliver();
-        IO.println("Estado tras entregar: " + order.getStatus().value());
-        IO.println("  Evento: " + order.getDomainEvents().get(0).getClass().getSimpleName());
-        order.clearDomainEvents();
+        orderRoot.deliver();
+        IO.println("Estado tras entregar: " + orderRoot.getStatus().value());
+        IO.println("  Evento: " + orderRoot.getDomainEvents().get(0).getClass().getSimpleName());
+        orderRoot.clearDomainEvents();
 
         // ------------------------------------------------------------------
         // 8. ORDER AGGREGATE - Flujo alternativo: Cancelación
@@ -344,28 +344,28 @@ public class DomainFlowDemo {
         IO.println("\n--- [8] ORDER AGGREGATE - Flujo Alternativo: Cancelación ---");
 
         OrderItem laptopItem2 = OrderItem.from(laptop, Quantity.of(1));
-        Order orderToCancel = Order.create(
+        OrderRoot orderRootToCancel = OrderRoot.create(
                 OrderNumber.of("ORD-2026-002"),
                 Customer.of(CustomerId.of(7L), "Carlos Ramírez"),
                 List.of(laptopItem2),
                 "sistema"
         );
-        orderToCancel.clearDomainEvents();
+        orderRootToCancel.clearDomainEvents();
 
         // Confirmamos para demostrar cancelación desde CONFIRMED
-        orderToCancel.confirm();
-        orderToCancel.clearDomainEvents();
-        IO.println("Orden confirmada: " + orderToCancel.getOrderNumber().value());
+        orderRootToCancel.confirm();
+        orderRootToCancel.clearDomainEvents();
+        IO.println("Orden confirmada: " + orderRootToCancel.getOrderNumber().value());
 
         // CONFIRMED → CANCELLED
         // La capa de aplicación escucha OrderCancelled para liberar el stock
-        orderToCancel.cancel("Cliente solicitó cancelación por cambio de dirección");
-        IO.println("Estado tras cancelar: " + orderToCancel.getStatus().value());
+        orderRootToCancel.cancel("Cliente solicitó cancelación por cambio de dirección");
+        IO.println("Estado tras cancelar: " + orderRootToCancel.getStatus().value());
 
-        DomainEvent cancelEvent = orderToCancel.getDomainEvents().get(0);
+        DomainEvent cancelEvent = orderRootToCancel.getDomainEvents().get(0);
         IO.println("  Evento: " + cancelEvent.getClass().getSimpleName()
                 + " (señal para liberar stock reservado)");
-        orderToCancel.clearDomainEvents();
+        orderRootToCancel.clearDomainEvents();
 
         // ------------------------------------------------------------------
         // 9. VALIDACIÓN DE INVARIANTES POR VALUE OBJECTS
@@ -382,10 +382,10 @@ public class DomainFlowDemo {
         testInvariant("CustomerId <= 0", () -> CustomerId.of(0L));
         testInvariant("ProductName muy corta (< 3 chars)", () -> ProductName.of("AB"));
         testInvariant("Orden sin ítems", () ->
-                Order.create(OrderNumber.of("ORD-2026-003"),
+                OrderRoot.create(OrderNumber.of("ORD-2026-003"),
                         Customer.of(CustomerId.of(1L), "Test"),
                         List.of(), "admin"));
-        testInvariant("Transición inválida DELIVERED → CANCELLED", () -> order.cancel("intento inválido"));
+        testInvariant("Transición inválida DELIVERED → CANCELLED", () -> orderRoot.cancel("intento inválido"));
         testInvariant("Producto inactivo en OrderItem", () ->
                 OrderItem.from(oldKeyboard, Quantity.of(1)));
 

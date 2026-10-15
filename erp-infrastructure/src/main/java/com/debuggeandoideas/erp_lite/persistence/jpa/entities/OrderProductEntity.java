@@ -1,9 +1,10 @@
 package com.debuggeandoideas.erp_lite.persistence.jpa.entities;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.util.UUID;
-import lombok.*;
 
 @Entity
 @Table(name = "order_products")
@@ -15,8 +16,6 @@ import lombok.*;
 public class OrderProductEntity {
 
     @Id
-    @GeneratedValue
-    @org.hibernate.annotations.UuidGenerator
     @Column(name = "id", columnDefinition = "uuid", nullable = false, updatable = false)
     private UUID id;
 

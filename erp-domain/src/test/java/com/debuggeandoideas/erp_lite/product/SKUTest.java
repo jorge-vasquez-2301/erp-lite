@@ -1,6 +1,6 @@
 package com.debuggeandoideas.erp_lite.product;
 
-import com.debuggeandoideas.erp_lite.domain.product.SKU;
+import com.debuggeandoideas.erp_lite.domain.entities.product.SKU;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

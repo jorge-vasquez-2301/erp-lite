@@ -1,6 +1,6 @@
 package com.debuggeandoideas.erp_lite.persistence.rest.mappers;
 
-import com.debuggeandoideas.erp_lite.domain.customer.CustomerInfo;
+import com.debuggeandoideas.erp_lite.domain.entities.customer.CustomerInfo;
 import com.debuggeandoideas.erp_lite.persistence.rest.dtos.AddressDTO;
 import com.debuggeandoideas.erp_lite.persistence.rest.dtos.UserDTO;
 import org.mapstruct.Mapper;

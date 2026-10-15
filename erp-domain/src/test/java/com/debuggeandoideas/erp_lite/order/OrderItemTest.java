@@ -1,7 +1,7 @@
 package com.debuggeandoideas.erp_lite.order;
 
-import com.debuggeandoideas.erp_lite.domain.order.OrderItem;
-import com.debuggeandoideas.erp_lite.domain.product.*;
+import com.debuggeandoideas.erp_lite.domain.entities.order.OrderItem;
+import com.debuggeandoideas.erp_lite.domain.entities.product.*;
 import com.debuggeandoideas.erp_lite.domain.shared.Money;
 import com.debuggeandoideas.erp_lite.domain.shared.Quantity;
 import org.junit.jupiter.api.DisplayName;
@@ -32,10 +32,10 @@ class OrderItemTest {
     @DisplayName("Should Throw IllegalArgumentException When Quantity Is Null")
     void shouldThrowIllegalArgumentExceptionWhenQuantityIsNull() {
         final String msgEx = "Quantity cannot be null";
-        Product product = createValidProduct();
+        ProductRoot productRoot = createValidProduct();
 
         IllegalArgumentException targetEx = assertThrows(IllegalArgumentException.class,
-                () -> OrderItem.from(product, null));
+                () -> OrderItem.from(productRoot, null));
 
         assertEquals(msgEx, targetEx.getMessage());
     }
@@ -43,12 +43,12 @@ class OrderItemTest {
     @Test
     @DisplayName("Should Throw IllegalArgumentException When Product Is Inactive")
     void shouldThrowIllegalArgumentExceptionWhenProductIsInactive() {
-        Product product = createValidProduct();
-        product.deactivate();
+        ProductRoot productRoot = createValidProduct();
+        productRoot.deactivate();
         Quantity quantity = Quantity.of(5);
 
         IllegalArgumentException targetEx = assertThrows(IllegalArgumentException.class,
-                () -> OrderItem.from(product, quantity));
+                () -> OrderItem.from(productRoot, quantity));
 
         assertTrue(targetEx.getMessage().contains("Cannot create order item for inactive product"));
     }
@@ -56,11 +56,11 @@ class OrderItemTest {
     @Test
     @DisplayName("Should Throw IllegalArgumentException When Product Has Insufficient Stock")
     void shouldThrowIllegalArgumentExceptionWhenProductHasInsufficientStock() {
-        Product product = createProductWithStock(5);
+        ProductRoot productRoot = createProductWithStock(5);
         Quantity quantity = Quantity.of(10);
 
         IllegalArgumentException targetEx = assertThrows(IllegalArgumentException.class,
-                () -> OrderItem.from(product, quantity));
+                () -> OrderItem.from(productRoot, quantity));
 
         assertTrue(targetEx.getMessage().contains("Insufficient stock for product"));
         assertTrue(targetEx.getMessage().contains("Required: 10"));
@@ -70,37 +70,37 @@ class OrderItemTest {
     @Test
     @DisplayName("Should Create OrderItem With Valid Product And Quantity")
     void shouldCreateOrderItemWithValidProductAndQuantity() {
-        Product product = createValidProduct();
+        ProductRoot productRoot = createValidProduct();
         Quantity quantity = Quantity.of(5);
 
-        OrderItem orderItem = OrderItem.from(product, quantity);
+        OrderItem orderItem = OrderItem.from(productRoot, quantity);
 
         assertNotNull(orderItem.getId());
-        assertEquals(product.getId(), orderItem.getProductReference());
-        assertEquals(product.getName().value(), orderItem.getProductName());
+        assertEquals(productRoot.getId(), orderItem.getProductReference());
+        assertEquals(productRoot.getName().value(), orderItem.getProductName());
         assertEquals(quantity, orderItem.getQuantity());
-        assertEquals(product.getPrice(), orderItem.getUnitPrice());
-        assertEquals(product.getPrice().multiply(quantity), orderItem.getSubtotal());
+        assertEquals(productRoot.getPrice(), orderItem.getUnitPrice());
+        assertEquals(productRoot.getPrice().multiply(quantity), orderItem.getSubtotal());
     }
 
     @Test
     @DisplayName("Should Capture Product Name And Price As Snapshot")
     void shouldCaptureProductNameAndPriceAsSnapshot() {
-        Product product = createValidProduct();
+        ProductRoot productRoot = createValidProduct();
         Quantity quantity = Quantity.of(3);
-        Money originalPrice = product.getPrice();
-        String originalName = product.getName().value();
+        Money originalPrice = productRoot.getPrice();
+        String originalName = productRoot.getName().value();
 
-        OrderItem orderItem = OrderItem.from(product, quantity);
+        OrderItem orderItem = OrderItem.from(productRoot, quantity);
 
         // Modify product after order item creation
-        product.changePrice(Money.of(999.99, USD));
-        product.update(
+        productRoot.changePrice(Money.of(999.99, USD));
+        productRoot.update(
                 ProductName.of("Modified Product Name"),
                 "New Description",
-                product.getPrice(),
-                product.getCategory(),
-                product.getImage()
+                productRoot.getPrice(),
+                productRoot.getCategory(),
+                productRoot.getImage()
         );
 
         // OrderItem should preserve original values
@@ -112,12 +112,12 @@ class OrderItemTest {
     @Test
     @DisplayName("Should Calculate Subtotal Correctly")
     void shouldCalculateSubtotalCorrectly() {
-        Product product = createValidProduct();
+        ProductRoot productRoot = createValidProduct();
         Quantity quantity = Quantity.of(4);
 
-        OrderItem orderItem = OrderItem.from(product, quantity);
+        OrderItem orderItem = OrderItem.from(productRoot, quantity);
 
-        Money expectedSubtotal = product.getPrice().multiply(quantity);
+        Money expectedSubtotal = productRoot.getPrice().multiply(quantity);
         assertEquals(expectedSubtotal, orderItem.calculateSubtotal());
         assertEquals(expectedSubtotal, orderItem.getSubtotal());
     }
@@ -125,10 +125,10 @@ class OrderItemTest {
     @Test
     @DisplayName("Should Create OrderItem With Exact Stock Available")
     void shouldCreateOrderItemWithExactStockAvailable() {
-        Product product = createProductWithStock(10);
+        ProductRoot productRoot = createProductWithStock(10);
         Quantity quantity = Quantity.of(10);
 
-        OrderItem orderItem = assertDoesNotThrow(() -> OrderItem.from(product, quantity));
+        OrderItem orderItem = assertDoesNotThrow(() -> OrderItem.from(productRoot, quantity));
 
         assertEquals(quantity, orderItem.getQuantity());
     }
@@ -136,11 +136,11 @@ class OrderItemTest {
     @Test
     @DisplayName("Should Support Equals And HashCode By ID")
     void shouldSupportEqualsAndHashCodeByID() {
-        Product product = createValidProduct();
+        ProductRoot productRoot = createValidProduct();
         Quantity quantity = Quantity.of(5);
 
-        OrderItem orderItem1 = OrderItem.from(product, quantity);
-        OrderItem orderItem2 = OrderItem.from(product, quantity);
+        OrderItem orderItem1 = OrderItem.from(productRoot, quantity);
+        OrderItem orderItem2 = OrderItem.from(productRoot, quantity);
 
         // Different instances with different IDs should not be equal
         assertNotEquals(orderItem1, orderItem2);
@@ -150,17 +150,17 @@ class OrderItemTest {
     @Test
     @DisplayName("Should Have A Non Null ToString")
     void shouldHaveANonNullToString() {
-        Product product = createValidProduct();
+        ProductRoot productRoot = createValidProduct();
         Quantity quantity = Quantity.of(5);
 
-        OrderItem orderItem = OrderItem.from(product, quantity);
+        OrderItem orderItem = OrderItem.from(productRoot, quantity);
 
         assertNotNull(orderItem.toString());
         assertFalse(orderItem.toString().isEmpty());
     }
 
-    private Product createValidProduct() {
-        return Product.create(
+    private ProductRoot createValidProduct() {
+        return ProductRoot.create(
                 SKU.of("LAPTOP-001"),
                 ProductName.of("Laptop Computer"),
                 "High-performance laptop",
@@ -172,8 +172,8 @@ class OrderItemTest {
         );
     }
 
-    private Product createProductWithStock(int stockAmount) {
-        return Product.create(
+    private ProductRoot createProductWithStock(int stockAmount) {
+        return ProductRoot.create(
                 SKU.of("MOUSE-001"),
                 ProductName.of("Wireless Mouse"),
                 "Ergonomic wireless mouse",

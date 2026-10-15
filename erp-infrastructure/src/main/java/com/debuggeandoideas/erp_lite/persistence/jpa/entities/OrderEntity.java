@@ -1,12 +1,13 @@
 package com.debuggeandoideas.erp_lite.persistence.jpa.entities;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import lombok.*;
 
 @Entity
 @Table(
@@ -26,8 +27,6 @@ import lombok.*;
 public class OrderEntity {
 
     @Id
-    @GeneratedValue
-    @org.hibernate.annotations.UuidGenerator
     @Column(name = "id", columnDefinition = "uuid", nullable = false, updatable = false)
     private UUID id;
 

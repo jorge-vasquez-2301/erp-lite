@@ -1,6 +1,6 @@
 package com.debuggeandoideas.erp_lite.product;
 
-import com.debuggeandoideas.erp_lite.domain.product.ProductImage;
+import com.debuggeandoideas.erp_lite.domain.entities.product.ProductImage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ class ProductImageTest {
                     "Should throw exception for: " + invalidURL);
 
             assertTrue(targetEx.getMessage().contains("Invalid URL") ||
-                       targetEx.getMessage().contains("URL must"),
+                            targetEx.getMessage().contains("URL must"),
                     "Exception message should indicate invalid URL for: " + invalidURL);
         }
     }

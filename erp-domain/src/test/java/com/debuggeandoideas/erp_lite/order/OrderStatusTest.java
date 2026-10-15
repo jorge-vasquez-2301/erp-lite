@@ -1,6 +1,6 @@
 package com.debuggeandoideas.erp_lite.order;
 
-import com.debuggeandoideas.erp_lite.domain.order.OrderStatus;
+import com.debuggeandoideas.erp_lite.domain.entities.order.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
