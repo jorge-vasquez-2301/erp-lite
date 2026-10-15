@@ -133,7 +133,7 @@ public class CreateOrderUseCase {
     private void sendMail(OrderRoot order, Customer customer) {
         try {
             log.info("Sending mail: {}", customer.customerName() + "@gamil.com");
-            final var mail = Email.of("debuggeandoideas@gmail.com");
+            final var mail = Email.of("jv2301@gmail.com");
 
             this.emailService.sendMail(
                     mail,
