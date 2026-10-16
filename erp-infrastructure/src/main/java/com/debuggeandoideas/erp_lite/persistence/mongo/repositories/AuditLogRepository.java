@@ -1,4 +1,4 @@
-package com.debuggeandoideas.erp_lite.persistence.mongo.documents.repositories;
+package com.debuggeandoideas.erp_lite.persistence.mongo.repositories;
 
 import com.debuggeandoideas.erp_lite.persistence.mongo.documents.AuditLogDocument;
 import org.bson.types.ObjectId;

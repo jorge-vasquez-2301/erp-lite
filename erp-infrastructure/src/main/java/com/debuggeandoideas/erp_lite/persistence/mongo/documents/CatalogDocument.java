@@ -1,10 +1,7 @@
 package com.debuggeandoideas.erp_lite.persistence.mongo.documents;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.debuggeandoideas.erp_lite.enums.CatalogType;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;

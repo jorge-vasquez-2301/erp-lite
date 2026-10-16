@@ -15,7 +15,7 @@ services:
     networks:
       - erp-vpc
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U debuggeandoideas -d erp_db"]
+      test: [ "CMD-SHELL", "pg_isready -U debuggeandoideas -d erp_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -35,7 +35,7 @@ services:
     networks:
       - erp-vpc
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "debuggeandoideas", "-p", "secret", "--authenticationDatabase", "admin", "--quiet"]
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "debuggeandoideas", "-p", "secret", "--authenticationDatabase", "admin", "--quiet" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -51,7 +51,7 @@ services:
     networks:
       - erp-vpc
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "secret", "ping"]
+      test: [ "CMD", "redis-cli", "-a", "secret", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -72,25 +72,25 @@ services:
       - redis
     networks:
       - erp-vpc
-
-  # LocalStack - AWS S3 emulation for product images
+  # LocalStack - AWS services emulation
   localstack:
     image: localstack/localstack:3.8.1
     container_name: erp-localstack
     environment:
       - SERVICES=s3
       - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=debuggeandoideas
       - AWS_SECRET_ACCESS_KEY=secret
     ports:
-      - "4566:4566"
-      # LocalStack edge port
+      - "4566:4566"            # LocalStack edge port
+      - "4510-4559:4510-4559"  # External services port range
     networks:
       - erp-vpc
     healthcheck:
-      test: [ "CMD", "curl", "-f",
-              "http://localhost:4566/_localstack/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:4566/_localstack/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
