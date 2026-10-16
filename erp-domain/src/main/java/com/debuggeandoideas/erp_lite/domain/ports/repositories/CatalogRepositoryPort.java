@@ -1,9 +1,10 @@
 package com.debuggeandoideas.erp_lite.domain.ports.repositories;
 
-import com.debuggeandoideas.erp_lite.domain.entities.catalog.CatalogItem;
-import com.debuggeandoideas.erp_lite.domain.entities.catalog.CatalogType;
 
-import javax.xml.catalog.Catalog;
+import com.debuggeandoideas.erp_lite.domain.views.CatalogView;
+import com.debuggeandoideas.erp_lite.domain.views.ItemsView;
+import com.debuggeandoideas.erp_lite.enums.CatalogType;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -12,9 +13,9 @@ import java.util.Optional;
  */
 public interface CatalogRepositoryPort {
 
-    Optional<Catalog> findByType(CatalogType type);
+    Optional<CatalogView> findByType(CatalogType type);
 
-    List<CatalogItem> findItemsByType(CatalogType type);
+    List<ItemsView> findItemsByType(CatalogType type);
 
-    Optional<CatalogItem> findItemByTypeAndCode(CatalogType type, String code);
+    Optional<ItemsView> findItemByTypeAndCode(CatalogType type, String code);
 }
